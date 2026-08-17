@@ -1,26 +1,24 @@
-DIMYATI_XBT PORTFOLIO — PATCH V4
+DIMYATI_XBT — FINAL MOTION FIX
 
-Replace these 3 files in the GitHub repo:
+Replace these 4 files in the GitHub repo:
 - index.html
 - style.css
 - script.js
+- README.md
 
-Keep the existing media files in the repo root:
-- profile.jpeg
-- gimi-logo.png
-- v1.mp4 ... v10.mp4
-- h1.mp4 ... h7.mp4
+Also replace the existing horizontal video:
+- h7.mp4
 
-Important:
-- h7.mp4 should be the compressed <=20 MB version.
-- No asset subfolder is required by this patch.
+Main fixes:
+- 9:16 videos are now a true horizontal, one-at-a-time snap carousel.
+- No stacked vertical cards.
+- No autoplay. Every video stays still until its own Play button/video is tapped.
+- Only one video can play at a time.
+- The vertical cards are larger and use the available width better.
+- The existing glass / 3D / border / typography styling is preserved.
+- 16:9 work remains a separate horizontal carousel.
+- Official website favicon is attempted first for each ecosystem logo; if the site blocks it, a reliable favicon fallback is used, then a text fallback.
+- Responsive sizing is kept for phone, tablet and desktop.
 
-Fixes:
-- Removes references to missing hero.mp4/profile.webp and old media filenames.
-- Uses the actual root video/image filenames shown in the repo.
-- 9:16 vertical sticky showcase with glass/3D treatment.
-- 16:9 horizontal swipe/drag carousel.
-- Sound buttons for videos; autoplay remains muted for mobile compatibility.
-- Stronger 3D typography, sheen, glow, card tilt and scroll motion.
-- Mobile/tablet/desktop responsive safeguards.
-- Official-site favicon logo loading with local text fallback if a remote logo fails.
+IMPORTANT:
+Use the compressed h7.mp4 included here. It is below GitHub's 25 MB per-file limit.
