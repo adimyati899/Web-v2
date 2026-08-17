@@ -1,124 +1,39 @@
-const root=document.documentElement;
-const canvas=document.getElementById('ambient');
-const ctx=canvas.getContext('2d',{alpha:true});
-let W=0,H=0,dpr=Math.min(devicePixelRatio||1,1.6);
-const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-const fine=matchMedia('(pointer:fine)').matches;
-let mx=.5,my=.35,px=.5,py=.35;
-function resize(){W=innerWidth;H=innerHeight;canvas.width=Math.floor(W*dpr);canvas.height=Math.floor(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}
-resize();addEventListener('resize',resize,{passive:true});
-addEventListener('pointermove',e=>{mx=e.clientX/innerWidth;my=e.clientY/innerHeight});
-const dots=Array.from({length:Math.min(48,Math.max(18,Math.floor(innerWidth/30)))},(_,i)=>({x:Math.random(),y:Math.random(),r:Math.random()*1.7+.4,s:Math.random()*.2+.05,p:Math.random()*Math.PI*2}));
-function ambient(t){
-  px+=(mx-px)*.035; py+=(my-py)*.035;
-  ctx.clearRect(0,0,W,H);
-  const g1=ctx.createRadialGradient(W*(.78+(.5-px)*.08),H*(.14+(.5-py)*.06),0,W*.78,H*.14,Math.max(W,H)*.45);
-  g1.addColorStop(0,'rgba(118,89,255,.12)');g1.addColorStop(1,'rgba(118,89,255,0)');ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
-  const g2=ctx.createRadialGradient(W*(.16+(.5-px)*.05),H*(.74+(.5-py)*.08),0,W*.16,H*.74,Math.max(W,H)*.3);
-  g2.addColorStop(0,'rgba(93,231,255,.055)');g2.addColorStop(1,'rgba(93,231,255,0)');ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
-  if(!reduce && innerWidth>620){
-    dots.forEach(d=>{d.y+=d.s*0.0006;if(d.y>1.03)d.y=-.03;const x=d.x*W+(px-.5)*18,y=d.y*H+(py-.5)*12,alpha=.18+.12*Math.sin(t*.001+d.p);ctx.beginPath();ctx.arc(x,y,d.r,0,Math.PI*2);ctx.fillStyle=`rgba(200,255,50,${alpha})`;ctx.fill()});
-  }
-  requestAnimationFrame(ambient);
-}
-requestAnimationFrame(ambient);
-
-document.querySelectorAll('.reveal').forEach((el,i)=>el.style.transitionDelay=Math.min(i%7*45,240)+'ms');
-const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.1,rootMargin:'0px 0px -5% 0px'});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-
-addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;document.querySelector('.scroll-line i').style.width=(max>0?scrollY/max*100:0)+'%'},{passive:true});
-
-if(fine&&!reduce){
- document.querySelectorAll('[data-tilt]').forEach(el=>{
-  el.addEventListener('pointermove',e=>{const q=el.getBoundingClientRect();const x=e.clientX-q.left,qy=e.clientY-q.top;const rx=(.5-qy/q.height)*6,ry=(x/q.width-.5)*8;el.style.transform=`perspective(1100px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translateY(-4px)`});
-  el.addEventListener('pointerleave',()=>el.style.transform='');
- });
- document.querySelectorAll('.magnetic').forEach(el=>{el.addEventListener('pointermove',e=>{const q=el.getBoundingClientRect();el.style.transform=`translate(${(e.clientX-q.left-q.width/2)*.06}px,${(e.clientY-q.top-q.height/2)*.06}px)`});el.addEventListener('pointerleave',()=>el.style.transform='')});
-}
-
-// Vertical 9:16 showcase — one video element only.
-// Changing the source on a single element prevents any layer from ever covering
-// later sections while keeping a smooth glass crossfade.
-const verticalItems=[
- {src:'assets/videos/v4.mp4',meta:'AI VISUAL EXPERIMENT',title:'Motion in the City.'},
- {src:'assets/videos/v5.mp4',meta:'GIMI CAMPAIGN',title:'Wear the Idea.'},
- {src:'assets/videos/v6.mp4',meta:'VEED CREATOR WORK',title:'Designed to Move.'},
- {src:'assets/videos/v7.mp4',meta:'AI VISUAL EXPERIMENT',title:'One Image. Four Worlds.'},
- {src:'assets/videos/v9.mp4',meta:'GIMI CAMPAIGN',title:'Dinner After Dark.'},
- {src:'assets/videos/v10.mp4',meta:'AI FILM',title:'The Blue Dragon.'}
+const vertical=[
+ ['v1.mp4','Atmosphere in Motion','AI Visual Experiment'],['v2.mp4','The Night Has a Secret','AI Storytelling'],['v3.mp4','Every Choice Creates a Story','Creative Experiment'],['v4.mp4','Built for the Next Frame','Creator Campaign'],['v5.mp4','Wear the Idea','GIMI Campaign'],['v6.mp4','AI, Made Social','VEED Campaign'],['v7.mp4','One Image. Four Worlds.','AI Visual Experiment'],['v8.mp4','Locked In','Cinematic Short'],['v9.mp4','Dinner After Dark','GIMI Campaign'],['v10.mp4','The Blue Dragon','AI Film']
 ];
-const vA=document.getElementById('vA');
-const vCounter=document.getElementById('verticalCounter');
-const vLabel=document.getElementById('verticalLabel');
-const vMeta=document.getElementById('verticalMeta');
-const vTitle=document.getElementById('verticalTitle');
-const soundBtn=document.getElementById('soundBtn');
-const verticalScroll=document.getElementById('verticalScroll');
-let vIndex=-1,vMuted=true,vChanging=false,lastV=-1;
-
-function setVerticalText(i){
-  const item=verticalItems[i];
-  vCounter.textContent=String(i+1).padStart(2,'0')+' / '+String(verticalItems.length).padStart(2,'0');
-  vLabel.textContent=item.meta; vMeta.textContent=item.meta; vTitle.textContent=item.title;
-}
-
-function swapVertical(i){
-  if(i===vIndex||vChanging||i<0||i>=verticalItems.length||!vA)return;
-  vChanging=true;
-  const item=verticalItems[i];
-  vA.classList.add('changing');
-  setVerticalText(i);
-  window.setTimeout(()=>{
-    vA.src=item.src;
-    vA.load();
-    vA.muted=vMuted;
-    vA.play().catch(()=>{});
-    requestAnimationFrame(()=>vA.classList.remove('changing'));
-    vIndex=i;
-    vChanging=false;
-  },180);
-}
-
-swapVertical(0);
-
-function updateVerticalFromScroll(){
-  if(!verticalScroll)return;
-  const r=verticalScroll.getBoundingClientRect();
-  const travel=Math.max(1,verticalScroll.offsetHeight-innerHeight*.72);
-  const progress=Math.min(.999,Math.max(0,(innerHeight*.38-r.top)/travel));
-  const idx=Math.min(verticalItems.length-1,Math.floor(progress*verticalItems.length));
-  if(idx!==lastV){lastV=idx;swapVertical(idx);}
-}
-addEventListener('scroll',updateVerticalFromScroll,{passive:true});
-addEventListener('resize',updateVerticalFromScroll,{passive:true});
-
-soundBtn?.addEventListener('click',()=>{
-  vMuted=!vMuted;
-  vA.muted=vMuted;
-  soundBtn.classList.toggle('on',!vMuted);
-  soundBtn.textContent=vMuted?'◒':'◉';
-  if(!vMuted)vA.play().catch(()=>{});
-});
-
-// Widescreen 16:9 carousel: one video in one window, drag/swipe to change.
-const wideItems=[
- {src:'assets/videos/h1.mp4',meta:'AI FILM',title:'Launch Sequence.'},
- {src:'assets/videos/h2.mp4',meta:'AI VISUAL',title:'Through the Frame.'},
- {src:'assets/videos/h3.mp4',meta:'AI VISUAL',title:'Godzilla × Kratos.'},
- {src:'assets/videos/h4.mp4',meta:'POLLO AI',title:'A World Beneath.'},
- {src:'assets/videos/h5.mp4',meta:'CREATIVE FILM',title:'The Next Frame.'},
- {src:'assets/videos/h6.mp4',meta:'POLLO AI',title:'Cinematic Motion.'},
- {src:'assets/videos/h7.mp4',meta:'CREATIVE FILM',title:'A Story in Motion.'}
+const horizontal=[
+ ['h1.mp4','Launch Sequence','AI Film · 16:9'],['h2.mp4','From Stills to Cinema','Visual Experiment · 16:9'],['h3.mp4','Godzilla × Kratos','Pollo AI · 16:9'],['h4.mp4','ViktorPower','AI Film · 16:9'],['h5.mp4','Dark Fantasy','AI Video · 16:9'],['h6.mp4','The Impossible Shot','AI Cinematic · 16:9'],['h7.mp4','Luxury Motion','AI Cinematic · 16:9']
 ];
-const wideVideo=document.getElementById('wideVideo'),wideTitle=document.getElementById('wideTitle'),wideMeta=document.getElementById('wideMeta'),wideDots=document.getElementById('wideDots');let wIndex=0;
-wideItems.forEach((_,i)=>{const b=document.createElement('button');b.type='button';b.className=i===0?'active':'';b.addEventListener('click',()=>setWide(i));wideDots.appendChild(b)});
-function setWide(i){wIndex=(i+wideItems.length)%wideItems.length;const it=wideItems[wIndex];wideVideo.style.opacity='0';setTimeout(()=>{wideVideo.src=it.src;wideMeta.textContent=it.meta;wideTitle.textContent=it.title;wideVideo.load();wideVideo.play().catch(()=>{});wideVideo.style.opacity='1'},160);[...wideDots.children].forEach((d,n)=>d.classList.toggle('active',n===wIndex))}
-setWide(0);document.getElementById('widePrev').addEventListener('click',()=>setWide(wIndex-1));document.getElementById('wideNext').addEventListener('click',()=>setWide(wIndex+1));
-let sx=0,sy=0;document.getElementById('wideCarousel').addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;wideVideo.setPointerCapture?.(e.pointerId)});document.getElementById('wideCarousel').addEventListener('pointerup',e=>{const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.2)setWide(wIndex+(dx<0?1:-1))});
-
-// Keep all ecosystem logos in consistent circular glass containers.
-document.querySelectorAll('.logo-disc img').forEach(img=>{img.addEventListener('error',()=>{const t=document.createElement('span');t.textContent=(img.alt||'?').slice(0,1).toUpperCase();t.style.cssText='font:700 18px Space Grotesk;color:#e9ece9';img.replaceWith(t)},{once:true})});
-
-// Pause videos off-screen for mobile performance.
-const mediaObserver=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.target===wideVideo)return;if(!e.isIntersecting)e.target.pause()}),{threshold:.05});document.querySelectorAll('video').forEach(v=>{v.muted=true;v.playsInline=true;if(v!==wideVideo&&!v.classList.contains('v-layer'))mediaObserver.observe(v)});
+const logoData=[
+ ['Instagram','Social / Creator','https://www.instagram.com/','https://www.instagram.com/favicon.ico','IG'],['TikTok','Short-form video','https://www.tiktok.com/','https://www.tiktok.com/favicon.ico','TK'],['X','Creator network','https://x.com/','https://x.com/favicon.ico','X'],['GIMI','Creator campaigns','https://www.gimi.co/','https://www.gimi.co/favicon.ico','G'],['VEED','AI video platform','https://www.veed.io/','https://www.veed.io/favicon.ico','V'],['Pollo AI','AI creator program','https://pollo.ai/','https://pollo.ai/favicon.ico','P'],['Midnight','Web3 ecosystem','https://midnight.network/','https://midnight.network/favicon.ico','M'],['InVideo','AI video creation','https://invideo.io/','https://invideo.io/favicon.ico','IV'],['CapCut','Video editing','https://www.capcut.com/','https://www.capcut.com/favicon.ico','C'],['PixelDojo','AI visual creation','https://pixeldojo.ai/','https://pixeldojo.ai/favicon.ico','PD']
+];
+const $=(s,p=document)=>p.querySelector(s), $$=(s,p=document)=>[...p.querySelectorAll(s)];
+const verticalStage=$('#verticalStage'), carousel=$('#carousel'), logoStack=$('#logoStack');
+const allVideos=[];
+function makeVertical(item,i){
+ const el=document.createElement('article');el.className='v-card reveal';el.style.zIndex=String(i+1);el.style.top=`${12+i*1.2}vh`;
+ el.innerHTML=`<video src="${item[0]}" autoplay muted loop playsinline preload="metadata"></video><button class="sound" aria-label="Toggle sound" title="Toggle sound">⌁</button><div class="v-info"><small>${item[2]}</small><h3>${item[1]}</h3></div>`;
+ verticalStage.appendChild(el); const v=$('video',el), b=$('.sound',el); allVideos.push({v,card:el,button:b});
+ b.addEventListener('click',e=>{e.stopPropagation(); stopAll(v); v.muted=!v.muted; b.textContent=v.muted?'⌁':'🔊'; b.classList.toggle('active',!v.muted); v.play().catch(()=>{});});
+ v.addEventListener('error',()=>el.classList.add('media-error'));
+}
+vertical.forEach(makeVertical);
+function makeHorizontal(item){
+ const el=document.createElement('article');el.className='h-card reveal';
+ el.innerHTML=`<video src="${item[0]}" autoplay muted loop playsinline preload="metadata"></video><div class="h-info"><div><h3>${item[1]}</h3><small>${item[2]}</small></div><button class="h-sound" aria-label="Toggle sound" title="Toggle sound">⌁</button></div>`;
+ carousel.appendChild(el); const v=$('video',el),b=$('.h-sound',el); allVideos.push({v,card:el,button:b});
+ b.addEventListener('click',e=>{e.stopPropagation();stopAll(v);v.muted=!v.muted;b.textContent=v.muted?'⌁':'🔊';b.classList.toggle('active',!v.muted);v.play().catch(()=>{});});
+ v.addEventListener('error',()=>el.classList.add('media-error'));
+}
+horizontal.forEach(makeHorizontal);
+logoData.forEach(([name,role,href,src,fallback])=>{const el=document.createElement('a');el.className='logo-item glass reveal tilt3d';el.href=href;el.target='_blank';el.rel='noopener';el.innerHTML=`<span class="logo-left"><span class="logo-box"><img src="${src}" alt="${name} logo"><span class="logo-fallback" hidden>${fallback}</span></span><span><span class="logo-name">${name}</span><span class="logo-role">${role}</span></span></span><span class="logo-arrow">↗</span>`;const img=$('img',el),fallbackEl=$('.logo-fallback',el);img.addEventListener('error',()=>{img.style.display='none';fallbackEl.hidden=false});logoStack.appendChild(el);});
+function stopAll(except=null){allVideos.forEach(({v,button})=>{if(v!==except){v.muted=true;v.pause();if(button){button.textContent='⌁';button.classList.remove('active')}}});}
+const videoObserver=new IntersectionObserver(entries=>{entries.forEach(entry=>{const item=allVideos.find(x=>x.v===entry.target);if(!item)return;if(entry.isIntersecting&&entry.intersectionRatio>=.55){item.v.play().catch(()=>{});item.card.classList.add('is-active')}else if(entry.intersectionRatio<.18){item.v.pause();item.card.classList.remove('is-active')}})},{threshold:[0,.18,.55,.8]});
+allVideos.forEach(({v})=>{v.muted=true;v.setAttribute('muted','');v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');videoObserver.observe(v);});
+$('.prev').addEventListener('click',()=>carousel.scrollBy({left:-Math.min(carousel.clientWidth*.9,900),behavior:'smooth'}));$('.next').addEventListener('click',()=>carousel.scrollBy({left:Math.min(carousel.clientWidth*.9,900),behavior:'smooth'}));
+let drag=false,startX=0,startScroll=0;carousel.addEventListener('pointerdown',e=>{drag=true;startX=e.clientX;startScroll=carousel.scrollLeft;carousel.setPointerCapture(e.pointerId);carousel.style.cursor='grabbing'});carousel.addEventListener('pointermove',e=>{if(drag)carousel.scrollLeft=startScroll-(e.clientX-startX)*1.15});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>carousel.addEventListener(ev,()=>{drag=false;carousel.style.cursor='grab'}));
+const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target)}}),{threshold:.08});$$('.reveal').forEach(el=>revealObserver.observe(el));
+if(matchMedia('(pointer:fine)').matches){$$('.tilt3d').forEach(el=>{el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;el.style.transform=`perspective(1100px) rotateX(${(-y*5).toFixed(2)}deg) rotateY(${(x*7).toFixed(2)}deg) translateY(-4px)`});el.addEventListener('mouseleave',()=>el.style.transform='')})}
+$$('.magnetic').forEach(el=>{if(!matchMedia('(pointer:fine)').matches)return;el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect();el.style.transform=`translate(${((e.clientX-r.left-r.width/2)*.06).toFixed(1)}px,${((e.clientY-r.top-r.height/2)*.06).toFixed(1)}px)`});el.addEventListener('mouseleave',()=>el.style.transform='')});
+const progress=$('.scroll-progress');window.addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;progress.style.width=(max>0?scrollY/max*100:0)+'%';const cards=$$('.v-card');cards.forEach((card,i)=>{const r=card.getBoundingClientRect(),center=r.top+r.height/2,delta=(innerHeight/2-center)/(innerHeight/2);if(Math.abs(delta)<1.2){card.style.transform=`perspective(1200px) rotateY(${(delta*5).toFixed(2)}deg) rotateX(${(-delta*2).toFixed(2)}deg) translateY(${(delta*-8).toFixed(1)}px) translateZ(${(Math.abs(delta)*-10).toFixed(1)}px)`}})},{passive:true});
+window.addEventListener('load',()=>{setTimeout(()=>$$('.reveal').forEach((el,i)=>el.style.transitionDelay=`${Math.min(i*25,250)}ms`),50);allVideos.forEach(({v})=>v.play().catch(()=>{}));});
