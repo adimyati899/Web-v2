@@ -1,20 +1,26 @@
-# DIMYATI_XBT — GIMI-inspired portfolio
+DIMYATI_XBT PORTFOLIO — PATCH V4
 
-A responsive portfolio build inspired by the visual language, motion, spacing, campaign presentation and creator-focused structure observed on GIMI's public creator site. It is an original implementation, not a copy of GIMI's source code or proprietary assets.
+Replace these 3 files in the GitHub repo:
+- index.html
+- style.css
+- script.js
 
-## Included
-- Responsive mobile/tablet/desktop layout.
-- 9:16 vertical cinematic showcase with stacked sticky glass cards.
-- Sound toggle per vertical video.
+Keep the existing media files in the repo root:
+- profile.jpeg
+- gimi-logo.png
+- v1.mp4 ... v10.mp4
+- h1.mp4 ... h7.mp4
+
+Important:
+- h7.mp4 should be the compressed <=20 MB version.
+- No asset subfolder is required by this patch.
+
+Fixes:
+- Removes references to missing hero.mp4/profile.webp and old media filenames.
+- Uses the actual root video/image filenames shown in the repo.
+- 9:16 vertical sticky showcase with glass/3D treatment.
 - 16:9 horizontal swipe/drag carousel.
-- Glass UI, 3D perspective, animated background, ticker and scroll motion.
-- Brand/platform ecosystem stack with links to official domains.
-- GIMI featured creator section.
-- Email CTA and social links.
-- No duplicate video file is intentionally included in this build.
-
-## Run
-Open `index.html` directly, or serve the folder with any static server. No build step is required.
-
-## Notes
-Brand logos are requested from the brands' own official domains where available; each card has a text fallback if the remote favicon/logo cannot load. Replace those remote logo URLs with official SVG/PNG brand assets if you want fully offline hosting.
+- Sound buttons for videos; autoplay remains muted for mobile compatibility.
+- Stronger 3D typography, sheen, glow, card tilt and scroll motion.
+- Mobile/tablet/desktop responsive safeguards.
+- Official-site favicon logo loading with local text fallback if a remote logo fails.
