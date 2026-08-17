@@ -22,21 +22,21 @@ const horizontal = [
 
 const groups = {
   social: [
-    ['Instagram','Social / Creator','https://www.instagram.com/','https://www.instagram.com/favicon.ico'],
-    ['TikTok','Short-form video','https://www.tiktok.com/@gokuret777','https://www.tiktok.com/favicon.ico'],
-    ['X','Creator network','https://x.com/PredatorCuan','https://x.com/favicon.ico']
+    ['Instagram','Social / Creator','https://www.instagram.com/','instagram'],
+    ['TikTok','Short-form video','https://www.tiktok.com/@gokuret777','tiktok'],
+    ['X','Creator network','https://x.com/PredatorCuan','x']
   ],
   campaigns: [
-    ['GIMI','Creator campaigns','https://www.gimi.co/','https://www.gimi.co/favicon.ico'],
-    ['VEED','Creator campaigns','https://www.veed.io/','https://www.veed.io/favicon.ico'],
-    ['Pollo AI','Creator profile','https://pollo.ai/profile/pubgkorea109983','https://pollo.ai/favicon.ico']
+    ['GIMI','Creator campaigns','https://www.gimi.co/','gimi'],
+    ['VEED','Creator campaigns','https://www.veed.io/','veed'],
+    ['Pollo AI','Creator profile','https://pollo.ai/profile/pubgkorea109983','pollo']
   ],
   tools: [
-    ['Midjourney','AI image generation','https://www.midjourney.com/','https://www.midjourney.com/favicon.ico'],
-    ['InVideo','AI video creation','https://ai.invideo.io/','https://ai.invideo.io/favicon.ico'],
-    ['CapCut','Video editing','https://www.capcut.com/','https://www.capcut.com/favicon.ico'],
-    ['PixelDojo','AI visual creation','https://pixeldojo.ai/','https://pixeldojo.ai/favicon.ico'],
-    ['Midnight','Web3 ecosystem','https://midnight.network/','https://midnight.network/favicon.ico']
+    ['Midjourney','AI image generation','https://www.midjourney.com/','midjourney'],
+    ['InVideo','AI video creation','https://ai.invideo.io/','invideo'],
+    ['CapCut','Video editing','https://www.capcut.com/','capcut'],
+    ['PixelDojo','AI visual creation','https://pixeldojo.ai/','pixeldojo'],
+    ['Midnight','Web3 ecosystem','https://midnight.network/','midnight']
   ]
 };
 
@@ -105,11 +105,24 @@ function descriptionFor(title, meta){
 }
 
 function makeLogo(item){
-  const [name,role,href,src]=item;
+  const [name,role,href,brand]=item;
   const el=document.createElement('a');
-  el.className='logo-item glass reveal tilt3d'; el.href=href; el.target='_blank'; el.rel='noopener';
-  el.innerHTML=`<span class="logo-left"><span class="logo-box"><img src="${src}" alt="" aria-hidden="true" loading="lazy"></span><span><span class="logo-name">${name}</span><span class="logo-role">${role}</span></span></span><span class="logo-arrow">↗</span>`;
-  const img=$('img',el); img.addEventListener('error',()=>{img.remove(); el.querySelector('.logo-box').classList.add('logo-missing');});
+  el.className='logo-item glass reveal tilt3d';
+  el.href=href; el.target='_blank'; el.rel='noopener noreferrer';
+  const icon = brand==='gimi'
+    ? '<span class="brand-glyph brand-gimi" aria-hidden="true">GIMI</span>'
+    : `<img src="https://cdn.simpleicons.org/${brand}/ffffff" alt="" aria-hidden="true" loading="lazy" referrerpolicy="no-referrer">`;
+  el.innerHTML=`<span class="logo-left"><span class="logo-box brand-${brand}">${icon}</span><span class="logo-copy"><span class="logo-name">${name}</span><span class="logo-role">${role}</span></span></span><span class="logo-arrow">↗</span>`;
+  const img=$('img',el);
+  if(img){
+    img.addEventListener('error',()=>{
+      img.remove();
+      const fallback=document.createElement('span');
+      fallback.className='brand-glyph';
+      fallback.textContent=name==='X'?'X':name==='TikTok'?'TK':name==='Instagram'?'IG':name==='VEED'?'V':name==='Pollo AI'?'P':name==='Midjourney'?'MJ':name==='InVideo'?'IV':name==='CapCut'?'CC':name==='PixelDojo'?'PD':name==='Midnight'?'M':'AI';
+      el.querySelector('.logo-box').appendChild(fallback);
+    });
+  }
   return el;
 }
 function renderGroup(id,data){
@@ -149,7 +162,26 @@ if(matchMedia('(pointer:fine)').matches){
   $$('.magnetic').forEach(el=>el.addEventListener('mouseleave',()=>el.style.transform=''));
 }
 const progress=$('.scroll-progress');
-window.addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;if(progress)progress.style.width=(max>0?scrollY/max*100:0)+'%';},{passive:true});
+let scrollTick=false;
+window.addEventListener('scroll',()=>{
+  if(scrollTick)return;
+  scrollTick=true;
+  requestAnimationFrame(()=>{
+    const max=document.documentElement.scrollHeight-innerHeight;
+    if(progress)progress.style.width=(max>0?scrollY/max*100:0)+'%';
+    scrollTick=false;
+  });
+},{passive:true});
 
-// Keep same-page navigation smooth without ever forcing the page to the top.
-$$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.getAttribute('href'));if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});history.replaceState(null,'',a.getAttribute('href'));}}));
+// Prevent layout re-anchoring from making mobile scrolling jump.
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+
+// Same-page navigation only. Never rewrite the URL while the user is scrolling.
+$$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+  const target=$(a.getAttribute('href'));
+  if(target){
+    e.preventDefault();
+    const top=target.getBoundingClientRect().top+window.scrollY-92;
+    window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+  }
+}));
