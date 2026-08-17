@@ -2,66 +2,186 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#070809">
-<meta name="description" content="DIMYATI_XBT — AI creator portfolio, visual experiments, campaign work and creative direction.">
-<title>DIMYATI_XBT — AI Creator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06070a">
+<meta name="description" content="Dimyati_XBT — AI Creator, visual artist and Web3 explorer from Indonesia.">
+<title>DIMYATI_XBT — AI CREATOR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="noise"></div><div class="orb orb-a"></div><div class="orb orb-b"></div><div class="scroll-progress"></div>
-<header class="nav glass">
-  <a class="brand" href="#top">DIMYATI<span>_XBT</span></a>
-  <nav><a href="#work">Work</a><a href="#ecosystem">Ecosystem</a><a href="#contact">Contact</a></nav>
-  <a class="nav-cta magnetic" href="mailto:kpubg6360@gmail.com">Work with me <b>↗</b></a>
+<canvas id="ambient"></canvas>
+<div class="grain"></div>
+<div class="scroll-line"><i></i></div>
+
+<header class="site-header">
+  <a class="brandmark" href="#top">DIMYATI<span>_XBT</span></a>
+  <nav class="desktop-nav">
+    <a href="#story">STORY</a><a href="#work">WORK</a><a href="#ecosystem">ECOSYSTEM</a><a href="#contact">CONTACT</a>
+  </nav>
+  <a class="header-cta" href="#contact">CONTACT <b>↗</b></a>
 </header>
+
 <main id="top">
-<section class="hero section">
-  <div class="hero-copy reveal">
-    <div class="eyebrow"><i></i> AI CREATOR · WEB3 EXPLORER · INDONESIA</div>
-    <h1 class="hero-title" data-text="Ideas into moving worlds.">Ideas into<br><span>moving worlds.</span></h1>
-    <p>I create cinematic AI visuals, short-form video and campaign content for AI platforms, digital brands and creator ecosystems.</p>
-    <div class="hero-actions"><a class="button primary magnetic" href="#work">Explore the work <span>↘</span></a><a class="button magnetic" href="mailto:kpubg6360@gmail.com">Email me <span>↗</span></a></div>
-  </div>
-  <div class="profile-wrap reveal">
-    <div class="profile-card glass-3d tilt3d"><img src="profile.jpeg" alt="Dimyati_XBT profile visual"><div class="profile-meta"><strong>DIMYATI_XBT</strong><small>AI CREATOR / WEB3</small></div></div>
-    <div class="floating-chip chip-1">AI VIDEO</div><div class="floating-chip chip-2">CREATIVE DIRECTION</div>
-  </div>
-</section>
-<section class="ticker"><div>AI VIDEO · AI VISUALS · BRAND CONTENT · CREATIVE DIRECTION · AI VIDEO · AI VISUALS · BRAND CONTENT · CREATIVE DIRECTION ·</div></section>
-<section id="work" class="section showcase">
-  <div class="section-head reveal"><div><span class="index">01</span><h2>Vertical <span>motion.</span></h2></div><p>Selected 9:16 work — built to move, stop the scroll and make a visual idea feel real.</p></div>
-  <div class="vertical-stage" id="verticalStage"></div>
-</section>
-<section class="breather"><div class="breather-line"></div><p>Different tools. Different campaigns.<br><strong>One visual language.</strong></p><div class="breather-orb"></div></section>
-<section class="section horizontal-work">
-  <div class="section-head reveal"><div><span class="index">02</span><h2>Wide screen <span>work.</span></h2></div><p>Swipe, drag or use the arrows. One frame at a time, so every piece gets room to breathe.</p></div>
-  <div class="carousel-wrap reveal"><button class="carousel-btn prev" aria-label="Previous">←</button><div class="carousel" id="carousel"></div><button class="carousel-btn next" aria-label="Next">→</button><div class="drag-hint">SWIPE / DRAG <span>↔</span></div></div>
-</section>
-<section class="section capabilities">
-  <div class="section-head reveal"><div><span class="index">03</span><h2>What I <span>build.</span></h2></div></div>
-  <div class="cap-grid">
-    <article class="cap glass reveal"><span>01</span><h3>AI Video</h3><p>Cinematic short-form videos, AI-generated motion and social content.</p></article>
-    <article class="cap glass reveal"><span>02</span><h3>AI Visuals</h3><p>Characters, concepts, scenes and visual experiments built with AI.</p></article>
-    <article class="cap glass reveal"><span>03</span><h3>Brand Content</h3><p>Creator content for AI platforms, campaigns and digital brands.</p></article>
-    <article class="cap glass reveal"><span>04</span><h3>Creative Direction</h3><p>Concepts, prompts, visual direction and fast creator execution.</p></article>
-  </div>
-</section>
-<section id="ecosystem" class="section ecosystem">
-  <div class="section-head reveal"><div><span class="index">04</span><h2>Creative <span>ecosystem.</span></h2></div><p>Platforms, communities and creative environments that shape my work.</p></div>
-  <div class="logo-stack" id="logoStack"></div>
-</section>
-<section class="section gimi-case">
-  <div class="case-card glass-3d reveal">
-    <div class="case-copy"><span class="index">05 · FEATURED</span><h2>Built through<br><em>creator campaigns.</em></h2><p>GIMI has been a major part of my creator journey — a place where AI content becomes campaign work, gets approved, gets spotlighted and reaches real audiences.</p><a class="button primary magnetic" href="https://app.gimi.co/en/sign-up?code=RI-RFS6XE6YV4DF" target="_blank" rel="noopener">View creator profile <span>↗</span></a></div>
-    <div class="case-art"><div class="orb-card"><img src="gimi-logo.png" alt="GIMI"></div><div class="mini-stat"><b>Creator work</b><span>Campaigns · Visuals · AI video</span></div></div>
-  </div>
-</section>
-<section id="contact" class="section contact reveal"><div class="eyebrow"><i></i> AVAILABLE FOR COLLABORATIONS</div><h2>Have an idea?<br><span>Let’s make it.</span></h2><p>AI content · Creator campaigns · Brand collaborations · Digital projects</p><a class="email-link magnetic" href="mailto:kpubg6360@gmail.com">kpubg6360@gmail.com <b>↗</b></a></section>
+  <section class="hero" id="story">
+    <div class="hero-grid"></div>
+    <div class="hero-copy reveal">
+      <div class="eyebrow"><i></i>AI CREATOR · VISUAL ARTIST · WEB3 EXPLORER</div>
+      <h1 class="depth-title" data-text="Ideas into moving worlds."><span>Ideas into</span><em>moving</em><span>worlds.</span></h1>
+      <p>I create cinematic AI visuals, short-form video and campaign content for AI platforms, digital brands and creator ecosystems.</p>
+      <div class="hero-actions">
+        <a class="lime-btn magnetic" href="#work">Explore the work <b>↘</b></a>
+        <a class="quiet-btn" href="#about">Discover the story</a>
+      </div>
+    </div>
+    <div class="profile-orbit reveal" data-tilt>
+      <div class="profile-frame">
+        <div class="corner c1"></div><div class="corner c2"></div><div class="corner c3"></div><div class="corner c4"></div>
+        <img src="assets/images/profile.jpeg" alt="Dimyati_XBT profile">
+        <div class="profile-shade"></div>
+      </div>
+      <div class="profile-caption"><strong>DIMYATI_XBT</strong><span>AI CREATOR · WEB3 EXPLORER</span></div>
+    </div>
+  </section>
+
+  <section class="ticker" aria-label="skills">
+    <div class="ticker-track"><span>AI VIDEO</span><b>✦</b><span>AI VISUALS</span><b>✦</b><span>BRAND CONTENT</span><b>✦</b><span>CREATIVE DIRECTION</span><b>✦</b><span>WEB3</span><b>✦</b><span>AI VIDEO</span><b>✦</b><span>AI VISUALS</span><b>✦</b><span>BRAND CONTENT</span><b>✦</b><span>CREATIVE DIRECTION</span><b>✦</b><span>WEB3</span><b>✦</b></div>
+  </section>
+
+  <section class="section about" id="about">
+    <div class="section-kicker reveal"><span>01</span><small>THE CREATOR</small></div>
+    <div class="about-grid">
+      <div class="about-heading reveal"><p class="micro">DIMYATI_XBT / INDONESIA</p><h2 class="depth-small">Not just using AI.<br><em>Building with it.</em></h2></div>
+      <div class="about-copy reveal">
+        <p class="lead">I'm Dimyati_XBT — an AI Creator, visual artist and Web3 explorer building internet-native work since 2024.</p>
+        <p>My practice sits between generative AI, short-form video, visual design and creator campaigns. I use AI as a medium for motion, storytelling and fast creative experimentation.</p>
+        <p>I also explore Web3 ecosystems and creator platforms, connecting creative execution with the digital communities around it.</p>
+      </div>
+    </div>
+    <div class="facts reveal">
+      <div><small>BASED IN</small><b>Indonesia</b></div>
+      <div><small>CREATING SINCE</small><b>2024</b></div>
+      <div><small>EXPLORING WEB3 SINCE</small><b>2020</b></div>
+      <div><small>FOCUS</small><b>AI · VIDEO · WEB3</b></div>
+    </div>
+  </section>
+
+  <section class="section vertical-work" id="work">
+    <div class="section-kicker reveal"><span>02</span><small>SELECTED 9:16 WORK</small></div>
+    <div class="vertical-layout">
+      <div class="vertical-intro reveal">
+        <p class="micro">VERTICAL MOTION</p>
+        <h2 class="depth-small">Work that <em>moves.</em></h2>
+        <p>Selected vertical films and campaign pieces built to stop the scroll and make a visual idea feel real.</p>
+        <div class="work-meta"><span id="verticalCounter">01 / 06</span><span id="verticalLabel">AI FILM</span></div>
+      </div>
+      <div class="vertical-scroll" id="verticalScroll">
+        <div class="vertical-pin">
+          <div class="vertical-stage" data-tilt>
+            <div class="video-glass">
+              <video id="vA" class="v-layer active" muted autoplay loop playsinline preload="metadata"></video>
+              <video id="vB" class="v-layer" muted autoplay loop playsinline preload="metadata"></video>
+              <div class="video-vignette"></div>
+              <div class="video-reflection"></div>
+              <button class="sound-btn" id="soundBtn" type="button" aria-label="Toggle sound">◒</button>
+              <div class="stage-caption"><small id="verticalMeta">SELECTED WORK</small><strong id="verticalTitle">Moving Through the Frame</strong></div>
+            </div>
+            <div class="stage-glow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="statement-band reveal">
+    <p>AI IS THE MEDIUM.<br><strong>VISUALS ARE THE LANGUAGE.</strong></p>
+  </section>
+
+  <section class="section widescreen" id="widescreen">
+    <div class="section-kicker reveal"><span>03</span><small>16:9 SELECTED WORK</small></div>
+    <div class="wide-head reveal"><h2 class="depth-small">Wide screen <em>work.</em></h2><p>Drag, swipe or use the arrows. One film stays in focus at a time.</p></div>
+    <div class="wide-carousel reveal" id="wideCarousel" data-tilt>
+      <button class="wide-arrow left" id="widePrev" type="button" aria-label="Previous">←</button>
+      <div class="wide-window"><video id="wideVideo" muted autoplay loop playsinline preload="metadata"></video><div class="wide-overlay"><small id="wideMeta">AI FILM</small><strong id="wideTitle">Launch Sequence</strong></div></div>
+      <button class="wide-arrow right" id="wideNext" type="button" aria-label="Next">→</button>
+      <div class="wide-dots" id="wideDots"></div>
+    </div>
+  </section>
+
+  <section class="section gimi-case">
+    <div class="section-kicker reveal"><span>04</span><small>GIMI / CREATOR CAMPAIGNS</small></div>
+    <div class="case-grid">
+      <div class="case-copy reveal">
+        <p class="micro">SELECTED PLATFORM WORK</p>
+        <h2 class="depth-small">Built through <em>creator campaigns.</em></h2>
+        <p>GIMI is a creator campaign ecosystem where brands launch challenges and creators publish, submit and earn from performance, quality and recognition.</p>
+        <a class="text-link" href="https://app.gimi.co/en/sign-up?code=RI-RFS6XE6YV4DF" target="_blank" rel="noreferrer">View creator profile <b>↗</b></a>
+      </div>
+      <div class="gimi-orb-wrap reveal" data-tilt>
+        <div class="gimi-orb">
+          <div class="orb-shine"></div>
+          <img src="assets/images/gimi-logo.png" alt="GIMI logo">
+          <span class="orb-ring ring-a"></span><span class="orb-ring ring-b"></span>
+        </div>
+        <small>CREATOR CAMPAIGNS · AI CONTENT · WEB3 CREATIVE</small>
+      </div>
+    </div>
+    <div class="proof-grid">
+      <article class="proof-card reveal"><span>CREATOR PROFILE</span><strong>67</strong><small>SUBMISSIONS</small></article>
+      <article class="proof-card reveal"><span>APPROVALS</span><strong>54</strong><small>APPROVED</small></article>
+      <article class="proof-card reveal"><span>APPROVAL RATE</span><strong>90%</strong><small>CREATOR PERFORMANCE</small></article>
+      <article class="proof-card reveal"><span>SPOTLIGHTS</span><strong>3</strong><small>FEATURED WORK</small></article>
+    </div>
+  </section>
+
+  <section class="section archive">
+    <div class="section-kicker reveal"><span>05</span><small>CREATIVE ARCHIVE</small></div>
+    <div class="archive-grid">
+      <div class="archive-card reveal"><img src="assets/images/profile.jpeg" alt="Profile visual"><div><small>VISUAL IDENTITY</small><strong>One image.<br>Four worlds.</strong></div></div>
+      <div class="archive-copy reveal"><h2 class="depth-small">More than a feed.</h2><p>A working archive of campaign pieces, experiments and visual studies across AI platforms.</p><a class="text-link" href="#ecosystem">Explore the ecosystem <b>↘</b></a></div>
+    </div>
+  </section>
+
+  <section class="section ecosystem" id="ecosystem">
+    <div class="section-kicker reveal"><span>06</span><small>CREATIVE ECOSYSTEM</small></div>
+    <div class="eco-head reveal"><h2 class="depth-small">Where the work <em>lives.</em></h2><p>Platforms and ecosystems I use, explore and create around.</p></div>
+    <div class="eco-list">
+      <a class="eco-item reveal" href="https://www.instagram.com/dimyati_xbt" target="_blank" rel="noreferrer"><span class="logo-disc"><img src="https://www.instagram.com/favicon.ico" alt="Instagram"></span><div><strong>Instagram</strong><small>@dimyati_xbt</small></div><b>↗</b></a>
+      <a class="eco-item reveal" href="https://www.tiktok.com/@gokuret777" target="_blank" rel="noreferrer"><span class="logo-disc"><img src="https://www.tiktok.com/favicon.ico" alt="TikTok"></span><div><strong>TikTok</strong><small>@gokuret777</small></div><b>↗</b></a>
+      <a class="eco-item reveal" href="https://x.com/PredatorCuan" target="_blank" rel="noreferrer"><span class="logo-disc"><img src="https://x.com/favicon.ico" alt="X"></span><div><strong>X</strong><small>@PredatorCuan</small></div><b>↗</b></a>
+      <a class="eco-item reveal featured" href="https://www.gimi.co" target="_blank" rel="noreferrer"><span class="logo-disc gimi-disc"><img src="assets/images/gimi-logo.png" alt="GIMI"></span><div><strong>GIMI</strong><small>Creator campaigns</small></div><b>↗</b></a>
+      <a class="eco-item reveal" href="https://www.veed.io" target="_blank" rel="noreferrer"><span class="logo-disc"><img src="https://www.veed.io/favicon.ico" alt="VEED"></span><div><strong>VEED</strong><small>AI video creation</small></div><b>↗</b></a>
+      <a class="eco-item reveal" href="https://pollo.ai/profile/pubgkorea109983" target="_blank" rel="noreferrer"><span class="logo-disc"><img src="https://pollo.ai/favicon.ico" alt="Pollo AI"></span><div><strong>Pollo AI</strong><small>Creator profile</small></div><b>↗</b></a>
+      <a class="eco-item reveal" href="https://midnight.network/brand-hub" target="_blank" rel="noreferrer"><span class="logo-disc"><img src="https://midnight.network/favicon.ico" alt="Midnight"></span><div><strong>Midnight</strong><small>Web3 ecosystem</small></div><b>↗</b></a>
+      <a class="eco-item reveal" href="https://ai.invideo.io" target="_blank" rel="noreferrer"><span class="logo-disc"><img src="https://ai.invideo.io/favicon.ico" alt="InVideo"></span><div><strong>InVideo</strong><small>AI video creation</small></div><b>↗</b></a>
+      <a class="eco-item reveal" href="https://www.capcut.com" target="_blank" rel="noreferrer"><span class="logo-disc"><img src="https://www.capcut.com/favicon.ico" alt="CapCut"></span><div><strong>CapCut</strong><small>Editing & creator work</small></div><b>↗</b></a>
+      <a class="eco-item reveal" href="https://pixeldojo.ai" target="_blank" rel="noreferrer"><span class="logo-disc"><img src="https://pixeldojo.ai/favicon.ico" alt="PixelDojo"></span><div><strong>PixelDojo</strong><small>AI visual tools</small></div><b>↗</b></a>
+    </div>
+  </section>
+
+  <section class="section capabilities">
+    <div class="section-kicker reveal"><span>07</span><small>WHAT I BUILD</small></div>
+    <div class="cap-grid">
+      <article class="cap-card reveal"><small>01</small><h3>AI VIDEO</h3><p>Cinematic short-form videos, AI-generated motion and social content.</p></article>
+      <article class="cap-card reveal"><small>02</small><h3>AI VISUALS</h3><p>Characters, concepts, scenes and visual experiments built with AI.</p></article>
+      <article class="cap-card reveal"><small>03</small><h3>BRAND CONTENT</h3><p>Creator content for AI platforms, campaigns and digital brands.</p></article>
+      <article class="cap-card reveal"><small>04</small><h3>CREATIVE DIRECTION</h3><p>Concepts, prompts, visual direction and fast creator execution.</p></article>
+    </div>
+  </section>
+
+  <section class="section contact" id="contact">
+    <div class="contact-card reveal">
+      <div class="eyebrow"><i></i>AVAILABLE FOR SELECT CREATIVE PROJECTS</div>
+      <h2 class="depth-contact">Have an idea?<br><em>Let's make it.</em></h2>
+      <p>AI content · creator campaigns · visual systems · digital projects</p>
+      <a class="contact-btn magnetic" href="mailto:kpubg6360@gmail.com"><span class="mail-icon">✉</span>CONTACT ME <b>↗</b></a>
+    </div>
+  </section>
 </main>
-<footer><div>DIMYATI_XBT © 2026</div><div>AI CREATOR · INDONESIA</div><div><a href="https://www.instagram.com/dimyati_xbt/" target="_blank" rel="noopener">Instagram</a> · <a href="https://www.tiktok.com/@gokuret777" target="_blank" rel="noopener">TikTok</a> · <a href="https://x.com/PredatorCuan" target="_blank" rel="noopener">X</a></div></footer>
+
+<footer><span>DIMYATI_XBT © 2026</span><span>AI CREATOR · INDONESIA</span></footer>
 <script src="script.js"></script>
-</body></html>
+</body>
+</html>
