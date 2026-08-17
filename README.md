@@ -1,24 +1,20 @@
-DIMYATI_XBT — FINAL MOTION FIX
+DIMYATI_XBT — FINAL FIX V2
 
-Replace these 4 files in the GitHub repo:
+Files:
 - index.html
 - style.css
 - script.js
 - README.md
-
-Also replace the existing horizontal video:
 - h7.mp4
 
-Main fixes:
-- 9:16 videos are now a true horizontal, one-at-a-time snap carousel.
-- No stacked vertical cards.
-- No autoplay. Every video stays still until its own Play button/video is tapped.
-- Only one video can play at a time.
-- The vertical cards are larger and use the available width better.
-- The existing glass / 3D / border / typography styling is preserved.
-- 16:9 work remains a separate horizontal carousel.
-- Official website favicon is attempted first for each ecosystem logo; if the site blocks it, a reliable favicon fallback is used, then a text fallback.
-- Responsive sizing is kept for phone, tablet and desktop.
-
-IMPORTANT:
-Use the compressed h7.mp4 included here. It is below GitHub's 25 MB per-file limit.
+Fixes in V2:
+1. 9:16 portfolio is a true one-card-at-a-time horizontal snap carousel.
+2. Active vertical video plays automatically muted; tapping the speaker toggles sound.
+3. Audio is no longer permanently muted. Only one video can play at a time.
+4. Removed the extra PLAY/PAUSE text that looked like broken white text.
+5. Ecosystem links are cleaner: logo + platform name + arrow only.
+6. Anchor navigation is handled manually so clicking Work/Ecosystem/Contact does not cause a browser jump-to-top bug.
+7. Section spacing is tighter and the large empty breather area is reduced.
+8. Mobile spacing and carousel sizing are tightened for a more continuous, structured flow.
+9. Existing visual identity, glass cards, 3D effects and videos are preserved.
+10. h7.mp4 remains the compressed version under GitHub's 25 MB single-file limit.

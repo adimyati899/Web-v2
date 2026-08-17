@@ -22,16 +22,16 @@ const horizontal=[
 ];
 
 const logoData=[
- ['Instagram','Social / Creator','https://www.instagram.com/','https://www.instagram.com/favicon.ico','IG','instagram.com'],
- ['TikTok','Short-form video','https://www.tiktok.com/','https://www.tiktok.com/favicon.ico','TK','tiktok.com'],
- ['X','Creator network','https://x.com/','https://x.com/favicon.ico','X','x.com'],
- ['GIMI','Creator campaigns','https://www.gimi.co/','https://www.gimi.co/favicon.ico','G','gimi.co'],
- ['VEED','AI video platform','https://www.veed.io/','https://www.veed.io/favicon.ico','V','veed.io'],
- ['Pollo AI','AI creator program','https://pollo.ai/','https://pollo.ai/favicon.ico','P','pollo.ai'],
- ['Midnight','Web3 ecosystem','https://midnight.network/','https://midnight.network/favicon.ico','M','midnight.network'],
- ['InVideo','AI video creation','https://invideo.io/','https://invideo.io/favicon.ico','IV','invideo.io'],
- ['CapCut','Video editing','https://www.capcut.com/','https://www.capcut.com/favicon.ico','C','capcut.com'],
- ['PixelDojo','AI visual creation','https://pixeldojo.ai/','https://pixeldojo.ai/favicon.ico','PD','pixeldojo.ai']
+ ['Instagram','https://www.instagram.com/','https://www.instagram.com/favicon.ico','IG','instagram.com'],
+ ['TikTok','https://www.tiktok.com/','https://www.tiktok.com/favicon.ico','TK','tiktok.com'],
+ ['X','https://x.com/','https://x.com/favicon.ico','X','x.com'],
+ ['GIMI','https://www.gimi.co/','https://www.gimi.co/favicon.ico','G','gimi.co'],
+ ['VEED','https://www.veed.io/','https://www.veed.io/favicon.ico','V','veed.io'],
+ ['Pollo AI','https://pollo.ai/','https://pollo.ai/favicon.ico','P','pollo.ai'],
+ ['Midnight','https://midnight.network/','https://midnight.network/favicon.ico','M','midnight.network'],
+ ['InVideo','https://invideo.io/','https://invideo.io/favicon.ico','IV','invideo.io'],
+ ['CapCut','https://www.capcut.com/','https://www.capcut.com/favicon.ico','C','capcut.com'],
+ ['PixelDojo','https://pixeldojo.ai/','https://pixeldojo.ai/favicon.ico','PD','pixeldojo.ai']
 ];
 
 const $=(s,p=document)=>p.querySelector(s);
@@ -40,6 +40,24 @@ const verticalStage=$('#verticalStage');
 const carousel=$('#carousel');
 const logoStack=$('#logoStack');
 const allVideos=[];
+let activeVertical=null;
+
+function setButton(button, video){
+  if(!button)return;
+  if(video.paused){
+    button.textContent='▶';
+    button.classList.remove('active');
+    button.setAttribute('aria-label','Play video');
+  }else if(video.muted){
+    button.textContent='🔇';
+    button.classList.remove('active');
+    button.setAttribute('aria-label','Turn sound on');
+  }else{
+    button.textContent='🔊';
+    button.classList.add('active');
+    button.setAttribute('aria-label','Turn sound off');
+  }
+}
 
 function stopAll(except=null){
   allVideos.forEach(({v,button,card})=>{
@@ -47,12 +65,19 @@ function stopAll(except=null){
       v.pause();
       v.muted=true;
       card.classList.remove('is-active');
-      if(button){
-        button.textContent='⌁';
-        button.classList.remove('active');
-      }
+      setButton(button,v);
     }
   });
+}
+
+function playVideo(state, allowSound=false){
+  const {v,card,button}=state;
+  stopAll(v);
+  v.muted=!allowSound;
+  v.play().then(()=>{
+    card.classList.add('is-active');
+    setButton(button,v);
+  }).catch(()=>setButton(button,v));
 }
 
 function makeVertical(item,i){
@@ -61,34 +86,26 @@ function makeVertical(item,i){
   el.dataset.index=i;
   el.innerHTML=`
     <video src="${item[0]}" muted loop playsinline preload="metadata" disablepictureinpicture></video>
-    <button class="sound" aria-label="Play ${item[1]}" title="Play video">⌁</button>
+    <button type="button" class="sound" aria-label="Play video" title="Play / sound">▶</button>
     <div class="v-info"><small>${item[2]}</small><h3>${item[1]}</h3></div>`;
   verticalStage.appendChild(el);
-
   const v=$('video',el), b=$('.sound',el);
-  const itemState={v,card:el,button:b};
-  allVideos.push(itemState);
-
-  const toggle=()=>{
-    if(v.paused){
-      stopAll(v);
-      v.muted=true;
-      v.play().then(()=>{
-        el.classList.add('is-active');
-        b.textContent='❚❚';
-        b.classList.add('active');
-      }).catch(()=>{});
-    }else{
-      v.pause();
-      el.classList.remove('is-active');
-      b.textContent='⌁';
-      b.classList.remove('active');
-    }
-  };
-
-  b.addEventListener('click',e=>{e.stopPropagation();toggle()});
-  v.addEventListener('click',e=>{e.stopPropagation();toggle()});
+  const state={v,card:el,button:b,type:'vertical'};
+  allVideos.push(state);
+  v.addEventListener('play',()=>setButton(b,v));
+  v.addEventListener('pause',()=>setButton(b,v));
+  b.addEventListener('click',e=>{
+    e.preventDefault();e.stopPropagation();
+    if(v.paused) playVideo(state,false);
+    else { v.muted=!v.muted; setButton(b,v); }
+  });
+  v.addEventListener('click',e=>{
+    e.preventDefault();e.stopPropagation();
+    if(v.paused) playVideo(state,false);
+    else { v.muted=!v.muted; setButton(b,v); }
+  });
   v.addEventListener('error',()=>el.classList.add('media-error'));
+  setButton(b,v);
 }
 vertical.forEach(makeVertical);
 
@@ -99,36 +116,30 @@ function makeHorizontal(item){
     <video src="${item[0]}" muted loop playsinline preload="metadata" disablepictureinpicture></video>
     <div class="h-info">
       <div><h3>${item[1]}</h3><small>${item[2]}</small></div>
-      <button class="h-sound" aria-label="Play ${item[1]}" title="Play video">⌁</button>
+      <button type="button" class="h-sound" aria-label="Play video" title="Play / sound">▶</button>
     </div>`;
   carousel.appendChild(el);
-
   const v=$('video',el), b=$('.h-sound',el);
-  allVideos.push({v,card:el,button:b});
-
-  const toggle=()=>{
-    if(v.paused){
-      stopAll(v);
-      v.muted=true;
-      v.play().then(()=>{
-        el.classList.add('is-active');
-        b.textContent='❚❚';
-        b.classList.add('active');
-      }).catch(()=>{});
-    }else{
-      v.pause();
-      el.classList.remove('is-active');
-      b.textContent='⌁';
-      b.classList.remove('active');
-    }
-  };
-  b.addEventListener('click',e=>{e.stopPropagation();toggle()});
-  v.addEventListener('click',e=>{e.stopPropagation();toggle()});
+  const state={v,card:el,button:b,type:'horizontal'};
+  allVideos.push(state);
+  v.addEventListener('play',()=>setButton(b,v));
+  v.addEventListener('pause',()=>setButton(b,v));
+  b.addEventListener('click',e=>{
+    e.preventDefault();e.stopPropagation();
+    if(v.paused) playVideo(state,false);
+    else { v.muted=!v.muted; setButton(b,v); }
+  });
+  v.addEventListener('click',e=>{
+    e.preventDefault();e.stopPropagation();
+    if(v.paused) playVideo(state,false);
+    else { v.muted=!v.muted; setButton(b,v); }
+  });
   v.addEventListener('error',()=>el.classList.add('media-error'));
+  setButton(b,v);
 }
 horizontal.forEach(makeHorizontal);
 
-logoData.forEach(([name,role,href,src,fallback,domain])=>{
+logoData.forEach(([name,href,src,fallback,domain])=>{
   const el=document.createElement('a');
   el.className='logo-item glass reveal tilt3d';
   el.href=href;
@@ -141,11 +152,10 @@ logoData.forEach(([name,role,href,src,fallback,domain])=>{
         <img src="${src}" alt="${name} logo" loading="lazy" referrerpolicy="no-referrer">
         <span class="logo-fallback" hidden>${fallback}</span>
       </span>
-      <span><span class="logo-name">${name}</span><span class="logo-role">${role}</span></span>
+      <span class="logo-name">${name}</span>
     </span>
     <span class="logo-arrow">↗</span>`;
   const img=$('img',el), fallbackEl=$('.logo-fallback',el);
-
   img.addEventListener('error',()=>{
     if(img.dataset.proxyTried!=='1'){
       img.dataset.proxyTried='1';
@@ -159,8 +169,14 @@ logoData.forEach(([name,role,href,src,fallback,domain])=>{
 });
 
 const prev=$('.prev'), next=$('.next');
-prev?.addEventListener('click',()=>carousel.scrollBy({left:-Math.min(carousel.clientWidth*.92,900),behavior:'smooth'}));
-next?.addEventListener('click',()=>carousel.scrollBy({left:Math.min(carousel.clientWidth*.92,900),behavior:'smooth'}));
+prev?.addEventListener('click',e=>{
+  e.preventDefault();
+  carousel.scrollBy({left:-Math.min(carousel.clientWidth*.92,900),behavior:'smooth'});
+});
+next?.addEventListener('click',e=>{
+  e.preventDefault();
+  carousel.scrollBy({left:Math.min(carousel.clientWidth*.92,900),behavior:'smooth'});
+});
 
 let drag=false,startX=0,startScroll=0;
 carousel.addEventListener('pointerdown',e=>{
@@ -173,9 +189,26 @@ carousel.addEventListener('pointerdown',e=>{
 carousel.addEventListener('pointermove',e=>{
   if(drag) carousel.scrollLeft=startScroll-(e.clientX-startX)*1.08;
 });
-['pointerup','pointercancel','lostpointercapture'].forEach(ev=>
-  carousel.addEventListener(ev,()=>{drag=false;carousel.style.cursor='grab'})
-);
+['pointerup','pointercancel','lostpointercapture'].forEach(ev=>carousel.addEventListener(ev,()=>{
+  drag=false;carousel.style.cursor='grab';
+}));
+
+/* Vertical carousel: one card becomes active at a time. It starts muted for
+   browser autoplay compatibility. Tap the speaker to restore audio. */
+const verticalObserver=new IntersectionObserver(entries=>{
+  let best=null;
+  entries.forEach(entry=>{
+    if(entry.isIntersecting && entry.intersectionRatio>.55){
+      best=entry.target;
+    }
+  });
+  if(best && best!==activeVertical){
+    activeVertical=best;
+    const state=allVideos.find(x=>x.card===best);
+    if(state) playVideo(state,false);
+  }
+},{root:verticalStage,threshold:[.55,.75,.9]});
+$$('.v-card').forEach(card=>verticalObserver.observe(card));
 
 const revealObserver=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
@@ -184,48 +217,48 @@ const revealObserver=new IntersectionObserver(entries=>{
       revealObserver.unobserve(entry.target);
     }
   });
-},{threshold:.08});
+},{threshold:.06});
 $$('.reveal').forEach(el=>revealObserver.observe(el));
 
 if(matchMedia('(pointer:fine)').matches){
   $$('.tilt3d').forEach(el=>{
     el.addEventListener('mousemove',e=>{
       const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
-      el.style.transform=`perspective(1100px) rotateX(${(-y*5).toFixed(2)}deg) rotateY(${(x*7).toFixed(2)}deg) translateY(-4px)`;
+      el.style.transform=`perspective(1100px) rotateX(${(-y*4).toFixed(2)}deg) rotateY(${(x*6).toFixed(2)}deg) translateY(-3px)`;
+    });
+    el.addEventListener('mouseleave',()=>el.style.transform='');
+  });
+  $$('.magnetic').forEach(el=>{
+    el.addEventListener('mousemove',e=>{
+      const r=el.getBoundingClientRect();
+      el.style.transform=`translate(${((e.clientX-r.left-r.width/2)*.05).toFixed(1)}px,${((e.clientY-r.top-r.height/2)*.05).toFixed(1)}px)`;
     });
     el.addEventListener('mouseleave',()=>el.style.transform='');
   });
 }
 
-$$('.magnetic').forEach(el=>{
-  if(!matchMedia('(pointer:fine)').matches)return;
-  el.addEventListener('mousemove',e=>{
-    const r=el.getBoundingClientRect();
-    el.style.transform=`translate(${((e.clientX-r.left-r.width/2)*.06).toFixed(1)}px,${((e.clientY-r.top-r.height/2)*.06).toFixed(1)}px)`;
+/* Anchor links never rely on the browser's default hash jump. */
+$$('a[href^="#"]').forEach(link=>{
+  link.addEventListener('click',e=>{
+    const id=link.getAttribute('href');
+    if(!id || id==='#')return;
+    const target=$(id);
+    if(!target)return;
+    e.preventDefault();
+    target.scrollIntoView({behavior:'smooth',block:'start'});
+    history.replaceState(null,'',id);
   });
-  el.addEventListener('mouseleave',()=>el.style.transform='');
 });
 
 const progress=$('.scroll-progress');
-window.addEventListener('scroll',()=>{
-  const max=document.documentElement.scrollHeight-innerHeight;
-  if(progress) progress.style.width=(max>0?scrollY/max*100:0)+'%';
-},{passive:true});
-
-/* Keep only the currently visible vertical card visually centered.
-   No autoplay: scrolling never starts a video. */
-const verticalObserver=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    const card=entry.target;
-    if(entry.isIntersecting && entry.intersectionRatio>.55){
-      card.classList.add('is-current');
-    }else{
-      card.classList.remove('is-current');
-    }
-  });
-},{root:verticalStage,threshold:[.2,.55,.8]});
-$$('.v-card').forEach(card=>verticalObserver.observe(card));
+function updateProgress(){
+  const max=document.documentElement.scrollHeight-window.innerHeight;
+  if(progress) progress.style.width=(max>0?(window.scrollY/max)*100:0)+'%';
+}
+window.addEventListener('scroll',updateProgress,{passive:true});
+window.addEventListener('resize',updateProgress,{passive:true});
+updateProgress();
 
 window.addEventListener('load',()=>{
-  setTimeout(()=>$$('.reveal').forEach((el,i)=>el.style.transitionDelay=`${Math.min(i*18,180)}ms`),50);
+  setTimeout(()=>$$('.reveal').forEach((el,i)=>el.style.transitionDelay=`${Math.min(i*12,120)}ms`),50);
 });
