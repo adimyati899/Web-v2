@@ -1,20 +1,21 @@
-DIMYATI_XBT — FINAL FIX V2
+# DIMYATI_XBT — 2 TAB FINAL
 
-Files:
-- index.html
-- style.css
-- script.js
-- README.md
-- h7.mp4
+## Structure
+- `index.html` = main portfolio. No video elements are rendered on the homepage.
+- `work.html` = Example Work tab. Contains the 9:16 and 16:9 video portfolio.
+- `style.css` = existing visual system plus only the additive styles needed for the two-tab split.
+- `script.js` = page-aware rendering, grouped ecosystem links, video controls and GIMI 3D orb.
 
-Fixes in V2:
-1. 9:16 portfolio is a true one-card-at-a-time horizontal snap carousel.
-2. Active vertical video plays automatically muted; tapping the speaker toggles sound.
-3. Audio is no longer permanently muted. Only one video can play at a time.
-4. Removed the extra PLAY/PAUSE text that looked like broken white text.
-5. Ecosystem links are cleaner: logo + platform name + arrow only.
-6. Anchor navigation is handled manually so clicking Work/Ecosystem/Contact does not cause a browser jump-to-top bug.
-7. Section spacing is tighter and the large empty breather area is reduced.
-8. Mobile spacing and carousel sizing are tightened for a more continuous, structured flow.
-9. Existing visual identity, glass cards, 3D effects and videos are preserved.
-10. h7.mp4 remains the compressed version under GitHub's 25 MB single-file limit.
+## Important changes
+- Homepage keeps the existing layout/style but removes all video sections from the page.
+- `Example Work` opens `work.html` and contains the videos + project descriptions.
+- Social links, creator campaign platforms, and AI tools are separated into three groups.
+- No duplicate VEED/Pollo entries.
+- No local `gimi-logo.png` dependency. GIMI logo is loaded from the official GIMI website favicon URL and placed into a JS/CSS 3D glass orb.
+- Videos do not autoplay. Each video has its own play/pause control; only one video plays at a time.
+- Same-page anchors are handled without a forced jump-to-top.
+- Spacing remains intentionally compact; the existing visual language is not rebuilt.
+
+## Repo note
+Remove the old `gimi-logo.png` from the repository after this version is confirmed working.
+Keep the existing video assets in the repository (`v1.mp4` ... `v10.mp4`, `h1.mp4` ... `h6.mp4`, and `h7_compressed_20mb.mp4`).
