@@ -8,7 +8,7 @@ let mx=.5,my=.35,px=.5,py=.35;
 function resize(){W=innerWidth;H=innerHeight;canvas.width=Math.floor(W*dpr);canvas.height=Math.floor(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}
 resize();addEventListener('resize',resize,{passive:true});
 addEventListener('pointermove',e=>{mx=e.clientX/innerWidth;my=e.clientY/innerHeight});
-const dots=Array.from({length:Math.min(90,Math.max(36,Math.floor(innerWidth/18)))},(_,i)=>({x:Math.random(),y:Math.random(),r:Math.random()*1.7+.4,s:Math.random()*.2+.05,p:Math.random()*Math.PI*2}));
+const dots=Array.from({length:Math.min(48,Math.max(18,Math.floor(innerWidth/30)))},(_,i)=>({x:Math.random(),y:Math.random(),r:Math.random()*1.7+.4,s:Math.random()*.2+.05,p:Math.random()*Math.PI*2}));
 function ambient(t){
   px+=(mx-px)*.035; py+=(my-py)*.035;
   ctx.clearRect(0,0,W,H);
@@ -16,7 +16,7 @@ function ambient(t){
   g1.addColorStop(0,'rgba(118,89,255,.12)');g1.addColorStop(1,'rgba(118,89,255,0)');ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
   const g2=ctx.createRadialGradient(W*(.16+(.5-px)*.05),H*(.74+(.5-py)*.08),0,W*.16,H*.74,Math.max(W,H)*.3);
   g2.addColorStop(0,'rgba(93,231,255,.055)');g2.addColorStop(1,'rgba(93,231,255,0)');ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
-  if(!reduce){
+  if(!reduce && innerWidth>620){
     dots.forEach(d=>{d.y+=d.s*0.0006;if(d.y>1.03)d.y=-.03;const x=d.x*W+(px-.5)*18,y=d.y*H+(py-.5)*12,alpha=.18+.12*Math.sin(t*.001+d.p);ctx.beginPath();ctx.arc(x,y,d.r,0,Math.PI*2);ctx.fillStyle=`rgba(200,255,50,${alpha})`;ctx.fill()});
   }
   requestAnimationFrame(ambient);
@@ -37,7 +37,9 @@ if(fine&&!reduce){
  document.querySelectorAll('.magnetic').forEach(el=>{el.addEventListener('pointermove',e=>{const q=el.getBoundingClientRect();el.style.transform=`translate(${(e.clientX-q.left-q.width/2)*.06}px,${(e.clientY-q.top-q.height/2)*.06}px)`});el.addEventListener('pointerleave',()=>el.style.transform='')});
 }
 
-// Vertical 9:16 showcase: only TWO video elements ever exist, preventing stacking/overlay bugs.
+// Vertical 9:16 showcase — one video element only.
+// Changing the source on a single element prevents any layer from ever covering
+// later sections while keeping a smooth glass crossfade.
 const verticalItems=[
  {src:'assets/videos/v4.mp4',meta:'AI VISUAL EXPERIMENT',title:'Motion in the City.'},
  {src:'assets/videos/v5.mp4',meta:'GIMI CAMPAIGN',title:'Wear the Idea.'},
@@ -46,14 +48,58 @@ const verticalItems=[
  {src:'assets/videos/v9.mp4',meta:'GIMI CAMPAIGN',title:'Dinner After Dark.'},
  {src:'assets/videos/v10.mp4',meta:'AI FILM',title:'The Blue Dragon.'}
 ];
-const vA=document.getElementById('vA'),vB=document.getElementById('vB'),vCounter=document.getElementById('verticalCounter'),vLabel=document.getElementById('verticalLabel'),vMeta=document.getElementById('verticalMeta'),vTitle=document.getElementById('verticalTitle'),soundBtn=document.getElementById('soundBtn'),verticalScroll=document.getElementById('verticalScroll');
-let vActive=vA,vNext=vB,vIndex=-1,vMuted=true,vBusy=false;
-function setText(i){const item=verticalItems[i];vCounter.textContent=String(i+1).padStart(2,'0')+' / '+String(verticalItems.length).padStart(2,'0');vLabel.textContent=item.meta;vMeta.textContent=item.meta;vTitle.textContent=item.title}
-async function swapVertical(i){if(i===vIndex||vBusy||i<0||i>=verticalItems.length)return;vBusy=true;const item=verticalItems[i];vNext.src=item.src;vNext.muted=vMuted;vNext.currentTime=0;vNext.classList.remove('active','out');try{await vNext.play()}catch(_){ }vActive.classList.add('out');requestAnimationFrame(()=>vNext.classList.add('active'));setText(i);setTimeout(()=>{vActive.pause();vActive.removeAttribute('src');vActive.load();[vActive,vNext]=[vNext,vActive];vBusy=false},700);vIndex=i}
-setText(0);swapVertical(0);
-const vObserver=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){const rect=verticalScroll.getBoundingClientRect();const progress=Math.min(0.999,Math.max(0,(innerHeight*.42-rect.top)/Math.max(1,verticalScroll.offsetHeight-innerHeight*.55)));const idx=Math.min(verticalItems.length-1,Math.floor(progress*verticalItems.length));swapVertical(idx)}else if(e.boundingClientRect.top>innerHeight){vActive.pause();vNext.pause()}}),{threshold:[.2,.5,.8]});vObserver.observe(verticalScroll);
-let lastV=-1;addEventListener('scroll',()=>{const r=verticalScroll.getBoundingClientRect();const denom=Math.max(1,verticalScroll.offsetHeight-innerHeight*.55);const progress=Math.min(.999,Math.max(0,(innerHeight*.42-r.top)/denom));const idx=Math.min(verticalItems.length-1,Math.floor(progress*verticalItems.length));if(idx!==lastV){lastV=idx;swapVertical(idx)}},{passive:true});
-soundBtn.addEventListener('click',()=>{vMuted=!vMuted;vActive.muted=vMuted;vNext.muted=vMuted;soundBtn.classList.toggle('on',!vMuted);soundBtn.textContent=vMuted?'◒':'◉'});
+const vA=document.getElementById('vA');
+const vCounter=document.getElementById('verticalCounter');
+const vLabel=document.getElementById('verticalLabel');
+const vMeta=document.getElementById('verticalMeta');
+const vTitle=document.getElementById('verticalTitle');
+const soundBtn=document.getElementById('soundBtn');
+const verticalScroll=document.getElementById('verticalScroll');
+let vIndex=-1,vMuted=true,vChanging=false,lastV=-1;
+
+function setVerticalText(i){
+  const item=verticalItems[i];
+  vCounter.textContent=String(i+1).padStart(2,'0')+' / '+String(verticalItems.length).padStart(2,'0');
+  vLabel.textContent=item.meta; vMeta.textContent=item.meta; vTitle.textContent=item.title;
+}
+
+function swapVertical(i){
+  if(i===vIndex||vChanging||i<0||i>=verticalItems.length||!vA)return;
+  vChanging=true;
+  const item=verticalItems[i];
+  vA.classList.add('changing');
+  setVerticalText(i);
+  window.setTimeout(()=>{
+    vA.src=item.src;
+    vA.load();
+    vA.muted=vMuted;
+    vA.play().catch(()=>{});
+    requestAnimationFrame(()=>vA.classList.remove('changing'));
+    vIndex=i;
+    vChanging=false;
+  },180);
+}
+
+swapVertical(0);
+
+function updateVerticalFromScroll(){
+  if(!verticalScroll)return;
+  const r=verticalScroll.getBoundingClientRect();
+  const travel=Math.max(1,verticalScroll.offsetHeight-innerHeight*.72);
+  const progress=Math.min(.999,Math.max(0,(innerHeight*.38-r.top)/travel));
+  const idx=Math.min(verticalItems.length-1,Math.floor(progress*verticalItems.length));
+  if(idx!==lastV){lastV=idx;swapVertical(idx);}
+}
+addEventListener('scroll',updateVerticalFromScroll,{passive:true});
+addEventListener('resize',updateVerticalFromScroll,{passive:true});
+
+soundBtn?.addEventListener('click',()=>{
+  vMuted=!vMuted;
+  vA.muted=vMuted;
+  soundBtn.classList.toggle('on',!vMuted);
+  soundBtn.textContent=vMuted?'◒':'◉';
+  if(!vMuted)vA.play().catch(()=>{});
+});
 
 // Widescreen 16:9 carousel: one video in one window, drag/swipe to change.
 const wideItems=[
